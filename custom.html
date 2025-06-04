@@ -18,25 +18,34 @@
       border-radius: 10px;
       font-family: sans-serif;
     }
+    .container {
+      width: 100vw;
+      height: 100vh;
+    }
+    model-viewer {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
   </style>
 </head>
 <body>
   <div class="upload-box">
     <label>
       Upload a .glb file:
-      <input type="file" id="fileInput" accept=".glb">
+      <input type="file" id="fileInput" accept=".glb" />
     </label>
   </div>
 
   <div class="container">
     <model-viewer
       id="viewer"
-      src="assets/models/squidward_spongebob.glb"
-      alt="Squidward"
+      alt="3D Model"
       autoplay
       animation-loop
       shadow-intensity="1"
       exposure="1"
+      camera-controls
     ></model-viewer>
   </div>
 
@@ -44,14 +53,14 @@
     const viewer = document.getElementById("viewer");
     const fileInput = document.getElementById("fileInput");
 
-    // Ask the user for milliseconds between rotations
+    // Prompt user for interval (ms)
     let userInput = prompt("Enter interval in milliseconds (default: 3000):");
     let INTERVAL = parseInt(userInput);
     if (isNaN(INTERVAL) || INTERVAL <= 0) INTERVAL = 3000;
 
     function setRandomOrbit() {
       const azimuth = Math.random() * 360;
-      const elevation = Math.random() * 40 + 5; // 5°–45° to avoid top/bottom extremes
+      const elevation = Math.random() * 40 + 5; // avoid bottom/top
       const radius = 2.5 + Math.random() * 1;
       viewer.cameraOrbit = `${azimuth}deg ${elevation}deg ${radius}m`;
     }
@@ -59,5 +68,26 @@
     setRandomOrbit();
     setInterval(setRandomOrbit, INTERVAL);
 
-    // Handle file upload
-    fileInput.addEventListener
+    // Load the initial model (optional)
+    // viewer.src = "assets/models/squidward_spongebob.glb";
+
+    // When user uploads a file, load it as the model source
+    fileInput.addEventListener("change", (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      if (file.name.toLowerCase().endsWith(".glb")) {
+        const url = URL.createObjectURL(file);
+        viewer.src = url;
+
+        // Reset orbit after model load
+        viewer.addEventListener("load", () => {
+          setRandomOrbit();
+        });
+      } else {
+        alert("Please upload a valid .glb file.");
+      }
+    });
+  </script>
+</body>
+</html>
