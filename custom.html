@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script type="module" src="assets/js/model-viewer.min.js"></script>
+  <link rel="stylesheet" href="assets/css/main.css">
+  <title>Squidward Angles</title>
+  <style>
+    .upload-box {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 10px 15px;
+      border-radius: 10px;
+      font-family: sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <div class="upload-box">
+    <label>
+      Upload a .glb file:
+      <input type="file" id="fileInput" accept=".glb">
+    </label>
+  </div>
+
+  <div class="container">
+    <model-viewer
+      id="viewer"
+      src="assets/models/squidward_spongebob.glb"
+      alt="Squidward"
+      autoplay
+      animation-loop
+      shadow-intensity="1"
+      exposure="1"
+    ></model-viewer>
+  </div>
+
+  <script>
+    const viewer = document.getElementById("viewer");
+    const fileInput = document.getElementById("fileInput");
+
+    // Ask the user for milliseconds between rotations
+    let userInput = prompt("Enter interval in milliseconds (default: 3000):");
+    let INTERVAL = parseInt(userInput);
+    if (isNaN(INTERVAL) || INTERVAL <= 0) INTERVAL = 3000;
+
+    function setRandomOrbit() {
+      const azimuth = Math.random() * 360;
+      const elevation = Math.random() * 40 + 5; // 5°–45° to avoid top/bottom extremes
+      const radius = 2.5 + Math.random() * 1;
+      viewer.cameraOrbit = `${azimuth}deg ${elevation}deg ${radius}m`;
+    }
+
+    setRandomOrbit();
+    setInterval(setRandomOrbit, INTERVAL);
+
+    // Handle file upload
+    fileInput.addEventListener
